@@ -1,0 +1,19 @@
+{
+  "name": "tattoo-studio-bot",
+  "version": "1.0.0",
+  "description": "Telegram Bot для тату-студии",
+  "main": "bot.js",
+  "scripts": {
+    "start": "node bot.js",
+    "dev": "nodemon bot.js"
+  },
+  "dependencies": {
+    "node-telegram-bot-api": "^0.64.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
+  },
+  "author": "",
+  "license": "ISC"
+}
+
