@@ -1,0 +1,19 @@
+# Операционная система
+.DS_Store
+Thumbs.db
+
+# Редакторы
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Временные файлы
+*.log
+*.tmp
+*.temp
+
+# Локальные настройки
+.env
+.env.local
+
