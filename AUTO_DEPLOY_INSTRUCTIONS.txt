@@ -1,0 +1,33 @@
+===========================================
+   РАЗВОРАЧИВАНИЕ НА RENDER - СУПЕР ПРОСТО
+===========================================
+
+ШАГ 1: Зарегистрироваться на Render
+------------------------------------
+1. Откройте: https://render.com
+2. Нажмите "Sign Up"
+3. Выберите "Sign up with GitHub"
+4. Авторизуйтесь
+
+ШАГ 2: Деплой (2 клика!)
+------------------------------------
+1. Нажмите "New +" → "Web Service"
+2. Выберите репозиторий: "Jettattoo/tattoo-studio"
+3. В настройках введите:
+
+   Name: tattoo-studio-bot
+   Environment: Node
+   Build Command: npm install
+   Start Command: node bot.js
+
+4. В разделе "Environment Variables" добавьте:
+   
+   Key: TELEGRAM_BOT_TOKEN
+   Value: 8272782280:AAGFCLqzJtQDhhpKxNxWJLR9fh1KWgnHBQg
+
+5. Нажмите "Create Web Service"
+
+ГОТОВО! Подождите 2-3 минуты и бот будет работать 24/7!
+
+===========================================
+
