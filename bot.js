@@ -9,6 +9,13 @@ const bot = new TelegramBot(TOKEN, { polling: true });
 // URL вашего Mini App
 const MINI_APP_URL = 'https://Jettattoo.github.io/tattoo-studio/';
 
+// Установить главную кнопку для всех чатов
+bot.setChatMenuButton({menu_button: {
+    type: 'web_app',
+    text: '🎨 Открыть студию',
+    web_app: { url: MINI_APP_URL }
+}});
+
 // Обработчик команды /start
 bot.onText(/\/start/, (msg) => {
     const chatId = msg.chat.id;
@@ -37,6 +44,25 @@ bot.onText(/\/start/, (msg) => {
             ]
         }
     });
+});
+
+// Обработчик любого сообщения (если не /start)
+bot.on('message', (msg) => {
+    const chatId = msg.chat.id;
+    
+    // Если не команда /start и есть текстовое сообщение
+    if (msg.text && !msg.text.startsWith('/')) {
+        bot.sendMessage(chatId, '👋 Нажмите на кнопку внизу экрана "🎨 Открыть студию" или отправьте /start для меню.', {
+            reply_markup: {
+                inline_keyboard: [[
+                    { 
+                        text: '📱 Открыть студию', 
+                        web_app: { url: MINI_APP_URL } 
+                    }
+                ]]
+            }
+        });
+    }
 });
 
 // Обработчики callback-кнопок
