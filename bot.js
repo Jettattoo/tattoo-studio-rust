@@ -1,7 +1,7 @@
 const TelegramBot = require('node-telegram-bot-api');
 
-// Токен вашего бота (получите через @BotFather)
-const TOKEN = '8272782280:AAGFCLqzJtQDhhpKxNxWJLR9fh1KWgnHBQg';
+// Токен бота из переменных окружения (для Render) или локальный
+const TOKEN = process.env.TELEGRAM_BOT_TOKEN || '8272782280:AAGFCLqzJtQDhhpKxNxWJLR9fh1KWgnHBQg';
 
 // Создаем экземпляр бота
 const bot = new TelegramBot(TOKEN, { polling: true });
@@ -9,61 +9,67 @@ const bot = new TelegramBot(TOKEN, { polling: true });
 // URL вашего Mini App
 const MINI_APP_URL = 'https://Jettattoo.github.io/tattoo-studio/';
 
-// Установить главную кнопку для всех чатов
-bot.setChatMenuButton({menu_button: {
-    type: 'web_app',
-    text: '🎨 Открыть студию',
-    web_app: { url: MINI_APP_URL }
-}});
+// Установить команды бота
+bot.setMyCommands([
+    { command: 'start', description: 'Запустить бота' },
+    { command: 'studio', description: 'Открыть студию' },
+    { command: 'portfolio', description: 'Портфолио' },
+    { command: 'booking', description: 'Записаться' }
+]);
 
-// Обработчик команды /start
+// Команда /start
 bot.onText(/\/start/, (msg) => {
     const chatId = msg.chat.id;
     const firstName = msg.from.first_name;
 
     bot.sendMessage(chatId, `🎨 Привет, ${firstName}! Добро пожаловать в тату-студию!`, {
         reply_markup: {
-            inline_keyboard: [
-                [
-                    { 
-                        text: '📱 Открыть студию', 
-                        web_app: { url: MINI_APP_URL } 
-                    }
-                ],
-                [
-                    { text: '📸 Портфолио', callback_data: 'portfolio' },
-                    { text: '📅 Записаться', callback_data: 'booking' }
-                ],
-                [
-                    { text: '👨‍🎨 Мастера', callback_data: 'artists' },
-                    { text: '💰 Цены', callback_data: 'prices' }
-                ],
-                [
-                    { text: '📞 Контакты', callback_data: 'contacts' }
-                ]
-            ]
+            keyboard: [
+                [{ text: '📱 Открыть студию', web_app: { url: MINI_APP_URL } }]
+            ],
+            resize_keyboard: true
         }
     });
 });
 
-// Обработчик любого сообщения (если не /start)
-bot.on('message', (msg) => {
+// Команда /studio - открыть студию
+bot.onText(/\/studio/, (msg) => {
     const chatId = msg.chat.id;
-    
-    // Если не команда /start и есть текстовое сообщение
-    if (msg.text && !msg.text.startsWith('/')) {
-        bot.sendMessage(chatId, '👋 Нажмите на кнопку внизу экрана "🎨 Открыть студию" или отправьте /start для меню.', {
-            reply_markup: {
-                inline_keyboard: [[
-                    { 
-                        text: '📱 Открыть студию', 
-                        web_app: { url: MINI_APP_URL } 
-                    }
-                ]]
-            }
-        });
-    }
+    bot.sendMessage(chatId, '🎨 Открываем студию...', {
+        reply_markup: {
+            keyboard: [
+                [{ text: '📱 Открыть студию', web_app: { url: MINI_APP_URL } }]
+            ],
+            resize_keyboard: true
+        }
+    });
 });
+
+// Команда /portfolio
+bot.onText(/\/portfolio/, (msg) => {
+    const chatId = msg.chat.id;
+    bot.sendMessage(chatId, '📸 Портфолио наших работ', {
+        reply_markup: {
+            inline_keyboard: [[
+                { text: '📱 Открыть портфолио', web_app: { url: MINI_APP_URL + '#portfolio' } }
+            ]]
+        }
+    });
+});
+
+// Команда /booking
+bot.onText(/\/booking/, (msg) => {
+    const chatId = msg.chat.id;
+    bot.sendMessage(chatId, '📅 Записаться на сеанс', {
+        reply_markup: {
+            keyboard: [
+                [{ text: '📱 Записаться', web_app: { url: MINI_APP_URL + '#booking' } }]
+            ],
+            resize_keyboard: true
+        }
+    });
+});
+
 
 // Обработчики callback-кнопок
 bot.on('callback_query', (query) => {

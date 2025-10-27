@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: tattoo-studio-bot
+    env: node
+    buildCommand: npm install
+    startCommand: node bot.js
+    envVars:
+      - key: TELEGRAM_BOT_TOKEN
+        sync: false
+
