@@ -9,7 +9,7 @@
 
 ### ✅ ШАГ 2: Создать сервис
 1. Нажмите **"New +"** (справа сверху)
-2. Выберите **"Web Service"**
+2. Выберите **"Background Worker"** ⚠️ ВАЖНО! НЕ Web Service!
 
 ### ✅ ШАГ 3: Подключить GitHub
 1. Нажмите **"Connect a repository"**
