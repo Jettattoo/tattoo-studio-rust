@@ -9,10 +9,6 @@ enum Command {
     Start,
     #[command(description = "Открыть студию")]
     Studio,
-    #[command(description = "Портфолио работ")]
-    Portfolio,
-    #[command(description = "Записаться на сеанс")]
-    Booking,
 }
 
 // URL Mini App
@@ -50,55 +46,14 @@ async fn answer(bot: Bot, msg: Message, cmd: Command) -> ResponseResult<()> {
         Command::Start => {
             log::info!("📥 Получена команда /start от: {}", user_name);
             
-            let keyboard = teloxide::types::ReplyKeyboardMarkup::new(vec![
-                vec![teloxide::types::KeyboardButton::new("📱 Открыть студию")
-                    .web_app(teloxide::types::WebAppInfo::new(MINI_APP_URL))]
-            ])
-            .resize_keyboard(true);
-
             bot.send_message(chat_id, format!("🎨 Привет, {}! Добро пожаловать в тату-студию!", user_name))
-                .reply_markup(keyboard)
                 .await?;
         }
         
         Command::Studio => {
             log::info!("📥 Получена команда /studio от: {}", user_name);
             
-            let keyboard = teloxide::types::ReplyKeyboardMarkup::new(vec![
-                vec![teloxide::types::KeyboardButton::new("📱 Открыть студию")
-                    .web_app(teloxide::types::WebAppInfo::new(MINI_APP_URL))]
-            ])
-            .resize_keyboard(true);
-
             bot.send_message(chat_id, "🎨 Открываем студию...")
-                .reply_markup(keyboard)
-                .await?;
-        }
-        
-        Command::Portfolio => {
-            log::info!("📥 Получена команда /portfolio от: {}", user_name);
-            
-            let keyboard = teloxide::types::InlineKeyboardMarkup::new(vec![
-                vec![teloxide::types::InlineKeyboardButton::new("📱 Открыть портфолио")
-                    .web_app(teloxide::types::WebAppInfo::new(&format!("{}#portfolio", MINI_APP_URL)))]
-            ]);
-
-            bot.send_message(chat_id, "📸 Портфолио наших работ")
-                .reply_markup(keyboard)
-                .await?;
-        }
-        
-        Command::Booking => {
-            log::info!("📥 Получена команда /booking от: {}", user_name);
-            
-            let keyboard = teloxide::types::ReplyKeyboardMarkup::new(vec![
-                vec![teloxide::types::KeyboardButton::new("📱 Записаться")
-                    .web_app(teloxide::types::WebAppInfo::new(&format!("{}#booking", MINI_APP_URL)))]
-            ])
-            .resize_keyboard(true);
-
-            bot.send_message(chat_id, "📅 Записаться на сеанс")
-                .reply_markup(keyboard)
                 .await?;
         }
     }
