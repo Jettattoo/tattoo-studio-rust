@@ -1,13 +1,11 @@
 services:
   - type: web
-    name: tattoo-studio-bot-rust
-    env: rust
+    name: tattoo-studio-bot-python
+    env: python
     region: frankfurt
     plan: free
-    buildCommand: cargo build --release
-    startCommand: ./target/release/tattoo-studio-bot
+    buildCommand: pip install -r requirements.txt
+    startCommand: python bot.py
     envVars:
       - key: TELEGRAM_BOT_TOKEN
         value: 8272782280:AAGFCLqzJtQDhhpKxNxWJLR9fh1KWgnHBQg
-      - key: RUST_LOG
-        value: info
