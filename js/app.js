@@ -170,7 +170,83 @@ function showPrices() {
         window.analyticsTracker.trackSectionViewed('prices');
     }
     showScreen('prices');
+    // Автоматически рассчитываем при открытии
+    setTimeout(calculatePrice, 100);
 }
+
+// Калькулятор стоимости
+const priceCalculator = {
+    basePrices: {
+        small: 3000,      // до 50 см²
+        medium: 5000,     // 50-150 см²
+        large: 10000,     // от 150 см²
+        portrait: 15000   // портрет
+    }
+};
+
+function calculatePrice() {
+    const size = document.getElementById('calc-size').value;
+    const style = document.getElementById('calc-style');
+    const styleMultiplier = parseFloat(style.options[style.selectedIndex].dataset.multiplier) || 1.0;
+    
+    const complexity = document.getElementById('calc-complexity');
+    const complexityMultiplier = parseFloat(complexity.options[complexity.selectedIndex].dataset.multiplier) || 1.0;
+    
+    const color = document.getElementById('calc-color');
+    const colorMultiplier = parseFloat(color.options[color.selectedIndex].dataset.multiplier) || 1.0;
+    
+    // Базовая цена
+    let basePrice = priceCalculator.basePrices[size] || priceCalculator.basePrices.medium;
+    
+    // Для портрета - особый расчет
+    if (size === 'portrait') {
+        basePrice = priceCalculator.basePrices.portrait;
+    }
+    
+    // Расчет с учетом множителей
+    let finalPrice = basePrice * styleMultiplier * complexityMultiplier * colorMultiplier;
+    
+    // Округление до сотен
+    finalPrice = Math.round(finalPrice / 100) * 100;
+    
+    // Минимальная цена
+    if (finalPrice < 2000) {
+        finalPrice = 2000;
+    }
+    
+    // Обновляем отображение
+    const priceElement = document.getElementById('calc-price');
+    priceElement.textContent = finalPrice.toLocaleString('ru-RU') + ' ₽';
+    
+    // Анимация обновления
+    priceElement.style.transform = 'scale(1.1)';
+    setTimeout(() => {
+        priceElement.style.transform = 'scale(1)';
+    }, 200);
+    
+    // Трекинг использования калькулятора
+    if (window.analyticsTracker) {
+        window.analyticsTracker.trackEvent('calculator_used', {
+            size: size,
+            style: style.value,
+            complexity: complexity.value,
+            color: color.value,
+            calculated_price: finalPrice
+        });
+    }
+}
+
+function resetCalculator() {
+    document.getElementById('calc-size').value = 'medium';
+    document.getElementById('calc-style').value = 'old_school';
+    document.getElementById('calc-complexity').value = 'simple';
+    document.getElementById('calc-color').value = 'bw';
+    calculatePrice();
+}
+
+// Экспорт функций
+window.calculatePrice = calculatePrice;
+window.resetCalculator = resetCalculator;
 
 // Контакты
 function showContacts() {
@@ -179,7 +255,82 @@ function showContacts() {
         window.analyticsTracker.trackSectionViewed('contacts');
     }
     showScreen('contacts');
+    // Генерируем QR-код при открытии
+    generateQRCode();
 }
+
+// Генерация QR-кода для контактов
+function generateQRCode() {
+    const qrContainer = document.getElementById('qr-code');
+    if (!qrContainer) return;
+    
+    // Контактная информация для QR-кода
+    const contactData = {
+        name: 'OnlyINK Тату-студия',
+        tel: '+79383003320',
+        address: 'г. Ставрополь, ул. Шпаковская, 97',
+        url: 'https://t.me/OnlyINKQbot'
+    };
+    
+    // Формируем vCard для QR-кода
+    const vCard = `BEGIN:VCARD
+VERSION:3.0
+FN:${contactData.name}
+TEL:${contactData.tel.replace(/[\s()-]/g, '')}
+ADR:;;${contactData.address};;;;
+URL:${contactData.url}
+END:VCARD`;
+    
+    // Используем API для генерации QR (без внешних библиотек)
+    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(vCard)}`;
+    
+    qrContainer.innerHTML = `<img src="${qrUrl}" alt="QR код контактов" style="max-width: 200px; width: 100%; border-radius: 8px; border: 2px solid rgba(102, 126, 234, 0.3);">`;
+}
+
+// Обработка формы обратной связи
+document.addEventListener('DOMContentLoaded', function() {
+    const contactForm = document.getElementById('contact-form');
+    if (contactForm) {
+        contactForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('contact-name').value;
+            const phone = document.getElementById('contact-phone').value;
+            const message = document.getElementById('contact-message').value;
+            
+            // Формируем сообщение для Telegram
+            const telegramMessage = `Новое сообщение из Mini App%0A%0A` +
+                `Имя: ${encodeURIComponent(name)}%0A` +
+                `Телефон: ${encodeURIComponent(phone)}%0A` +
+                `Сообщение: ${encodeURIComponent(message)}`;
+            
+            // Открываем Telegram с сообщением
+            const telegramUrl = `https://t.me/OnlyINKQbot?text=${telegramMessage}`;
+            
+            // Пытаемся открыть через Telegram WebApp API, если доступно
+            if (window.telegramAPI && window.telegramAPI.tg) {
+                window.telegramAPI.tg.openLink(telegramUrl);
+            } else {
+                // Или открываем в новой вкладке
+                window.open(telegramUrl, '_blank');
+            }
+            
+            // Показываем сообщение об успехе
+            alert('Сообщение подготовлено! Откроется Telegram для отправки.');
+            
+            // Сброс формы
+            contactForm.reset();
+            
+            // Трекинг отправки формы
+            if (window.analyticsTracker) {
+                window.analyticsTracker.trackEvent('contact_form_sent', {
+                    name: name,
+                    has_phone: !!phone
+                });
+            }
+        });
+    }
+});
 
 // О студии
 function showAbout() {
