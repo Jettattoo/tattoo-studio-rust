@@ -82,6 +82,10 @@ function showHome() {
 
 // Портфолио
 function showPortfolio() {
+    // Трекинг просмотра раздела
+    if (window.analyticsTracker) {
+        window.analyticsTracker.trackSectionViewed('portfolio');
+    }
     showScreen('portfolio');
     loadPortfolio();
 }
@@ -106,6 +110,16 @@ function loadPortfolio() {
 
 // Запись
 function showBooking() {
+    // Трекинг просмотра раздела
+    if (window.analyticsTracker) {
+        window.analyticsTracker.trackSectionViewed('booking');
+    }
+    
+    // Трекинг начала записи
+    if (window.analyticsTracker) {
+        window.analyticsTracker.trackBookingStarted();
+    }
+    
     showScreen('booking');
     
     // Установить минимальную дату как сегодня
@@ -115,6 +129,10 @@ function showBooking() {
 
 // Мастера
 function showArtists() {
+    // Трекинг просмотра раздела
+    if (window.analyticsTracker) {
+        window.analyticsTracker.trackSectionViewed('artists');
+    }
     showScreen('artists');
     loadArtists();
 }
@@ -147,16 +165,28 @@ function loadArtists() {
 
 // Цены
 function showPrices() {
+    // Трекинг просмотра раздела
+    if (window.analyticsTracker) {
+        window.analyticsTracker.trackSectionViewed('prices');
+    }
     showScreen('prices');
 }
 
 // Контакты
 function showContacts() {
+    // Трекинг просмотра раздела
+    if (window.analyticsTracker) {
+        window.analyticsTracker.trackSectionViewed('contacts');
+    }
     showScreen('contacts');
 }
 
 // О студии
 function showAbout() {
+    // Трекинг просмотра раздела
+    if (window.analyticsTracker) {
+        window.analyticsTracker.trackSectionViewed('about');
+    }
     showScreen('about');
 }
 
@@ -171,6 +201,11 @@ document.getElementById('booking-form')?.addEventListener('submit', (e) => {
         description: document.getElementById('booking-description').value,
         client: window.telegramAPI?.user || null
     };
+    
+    // Трекинг завершения записи
+    if (window.analyticsTracker) {
+        window.analyticsTracker.trackBookingCompleted(data);
+    }
     
     // Отправить данные
     if (window.telegramAPI?.sendBookingData) {
